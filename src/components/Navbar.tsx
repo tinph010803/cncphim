@@ -14,7 +14,7 @@ const Navbar = () => {
               `hover:text-blue-600 hover:bg-blue-600/20 px-2 py-4 ${isActive && ' text-blue-600'}`
             }
           >
-            Phim Hott
+            Phim Hot
           </NavLink>
         </li>
         <li>

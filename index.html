@@ -57,6 +57,27 @@
     <meta name="Author" content="Xem phim PHIMMOI - PHIMMOI" />
     <meta name="google" content="notranslate" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <script>
+      window.onload = function() {
+        const correctPassword = "183009"; // Mật khẩu cần nhập
+        let enteredPassword = "";
+    
+        // Sử dụng vòng lặp để yêu cầu nhập mật khẩu cho đến khi nhập đúng
+        while (enteredPassword !== correctPassword) {
+          enteredPassword = prompt("Nhập mật khẩu để tiếp tục:");
+    
+          // Nếu mật khẩu sai, hiển thị thông báo và yêu cầu nhập lại
+          if (enteredPassword !== correctPassword) {
+            alert("Mật khẩu sai. Bạn cần nhập lại.");
+          }
+        }
+    
+    
+      };
+    </script>
+    
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
