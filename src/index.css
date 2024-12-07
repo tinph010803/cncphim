@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+body,
+html {
+  background-color: #06121e;
+  padding: 0;
+  margin: 0;
+  user-select: none;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+html ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html ::-webkit-scrollbar-thumb {
+  background: rgb(100, 99, 99);
+  border-radius: 8px;
+}
+
+strong {
+  font-size: unset;
+  font-weight: unset;
+}
+
+@media screen and (max-width: 768px) {
+  .flex.space-x-4 > * {
+    display: block;
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
