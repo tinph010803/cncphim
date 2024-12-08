@@ -13,7 +13,8 @@ const PATH = {
   genres: '/the-loai',
   country: '/quoc-gia',
   hot: '/hot',
-  film: '/phim'
+  film: '/phim',
+  login: '/login',
 } as const
 
 export default PATH

@@ -19,7 +19,12 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+     /* Cho phép TypeScript xử lý tệp JavaScript */
+     "allowJs": true,  // Đảm bảo TypeScript có thể xử lý các tệp .js
+     "checkJs": false  // Tắt kiểm tra kiểu đối với các tệp .js
+
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
