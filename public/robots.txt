@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Host 
-Host: https://vphim.vercel.app
+Host: https://cncphim.vercel.app
 
 # Sitemaps
-Sitemap: https://vphim.vercel.app/sitemap.xml
+Sitemap: https://cncphim.vercel.app/sitemap.xml
