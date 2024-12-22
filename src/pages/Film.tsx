@@ -40,8 +40,8 @@ const Film = () => {
   return (
     <>
       <Helmet>
-        <title>{`VPhim | ${dataFilm?.seoOnPage.titleHead}`}</title>
-        <meta name='description' content={`${dataFilm?.seoOnPage.descriptionHead} | Xem phim miễn phí tại VPhim`} />
+        <title>{`CNCPhim | ${dataFilm?.seoOnPage.titleHead}`}</title>
+        <meta name='description' content={`${dataFilm?.seoOnPage.descriptionHead} | Xem phim miễn phí tại CNCPhim`} />
       </Helmet>
       <div>
         <div className='relative w-full h-[36vh] sm:h-[56vh] md:h-[66vh] lg:h-[76vh] xl:h-[86vh] bg-black'>

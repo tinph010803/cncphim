@@ -28,7 +28,7 @@ const Hot = () => {
   return (
     <>
       <Helmet>
-        <title>VPhim | Phim hot nhất | Phim hot nhất hay tuyển chọn | Phim hot nhất mới nhất 2022</title>
+        <title>CNCPhim | Phim hot nhất | Phim hot nhất hay tuyển chọn | Phim hot nhất mới nhất 2024</title>
         <meta
           name='description'
           content='Phim hot nhất mới nhất tuyển chọn chất lượng cao, Phim hot nhất mới nhất 2022 vietsub cập nhật nhanh nhất. Phim hot nhất vietsub nhanh nhất. Xem phim miễn phí tại VPhim'
