@@ -17,15 +17,15 @@ const Home = () => {
 
   const { data: dataSeries } = useQuery({
     queryKey: [
-      PATH.series,
+      PATH.odd,
       {
         ...queryConfig,
         sort_field: 'view',
-        year: newYear
+
       }
     ],
     queryFn: () =>
-      filmApis.getListFilm(PATH.series, {
+      filmApis.getListFilm(PATH.odd, {
         ...queryConfig,
         sort_field: 'view',
         year: newYear
@@ -42,9 +42,8 @@ const Home = () => {
       }
     ],
     queryFn: () =>
-      filmApis.getListFilm(PATH.odd, {
+      filmApis.getListFilm(PATH.new, {
         ...queryConfig,
-        sort_field: 'view',
         year: newYear
       }),
     staleTime: 3 * 60 * 1000
