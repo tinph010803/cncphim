@@ -49,6 +49,7 @@ const Film = () => {
             className='w-full h-full'
             title={dataFilm.item.name}
             src={episode}
+            key={episode}
             frameBorder={0}
             loading='eager'
             allowFullScreen
