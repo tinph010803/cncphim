@@ -5,7 +5,6 @@ import { MainLayout } from './layouts'
 // Các page cần lazy load
 const Home = lazy(() => import('./pages/Home'))
 const List = lazy(() => import('./pages/List'))
-const Hot = lazy(() => import('./pages/Hot'))
 const Search = lazy(() => import('./pages/Search'))
 const Detail = lazy(() => import('./pages/Detail'))
 const Film = lazy(() => import('./pages/Film'))
@@ -77,10 +76,7 @@ function App() {
           path: `${PATH.list}/${PATH.type}`,
           element: <SuspenseWithFallback><List /></SuspenseWithFallback>,
         },
-        {
-          path: PATH.hot,
-          element: <SuspenseWithFallback><Hot /></SuspenseWithFallback>,
-        },
+        
         {
           path: PATH.search,
           element: <SuspenseWithFallback><Search /></SuspenseWithFallback>,
