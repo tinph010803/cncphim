@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
-import { Link, createSearchParams, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import FacebookShareButton from 'react-share/es/FacebookShareButton';
 import axios from 'axios';
 import PATH from 'src/utils/path';

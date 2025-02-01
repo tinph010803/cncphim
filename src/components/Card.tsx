@@ -11,11 +11,7 @@ const Card = ({ data }: { data?: items }) => {
     );
   }
 
-  // Trích xuất `year` từ danh mục phim
-  let year = "N/A";
-  if (data.category && data.category["3"]?.list?.length > 0) {
-    year = data.category["3"].list[0].name;
-  }
+
 
   return (
     <Link to={`${PATH.film}/${data.slug}`} className="relative" title={data.name}>
