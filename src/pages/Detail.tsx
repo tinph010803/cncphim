@@ -1,10 +1,12 @@
 import DOMPurify from 'dompurify';
+import { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import FacebookShareButton from 'react-share/es/FacebookShareButton';
 import axios from 'axios';
 import PATH from 'src/utils/path';
+import { Toaster, toast } from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://phim.nguonc.com/api';
 
@@ -16,6 +18,7 @@ const fetchFilmDetails = async (slug: string) => {
 
 const Detail = () => {
   const { slug } = useParams();
+  const [isSaved, setIsSaved] = useState(false);
 
   // Gọi API chi tiết phim
   const { data, isLoading, isError } = useQuery(['filmDetail', slug], () => fetchFilmDetails(slug as string), {
@@ -24,6 +27,39 @@ const Detail = () => {
   });
 
   const dataFilm = data?.movie;
+
+  useEffect(() => {
+    const savedMovies = JSON.parse(localStorage.getItem('savedMovies') || '[]');
+    setIsSaved(savedMovies.some((m: { id: string }) => m.id === dataFilm?.id));
+  }, [dataFilm]);
+
+  const handleSaveMovie = () => {
+    let savedMovies = JSON.parse(localStorage.getItem('savedMovies') || '[]');
+
+    const movieData = {
+      id: dataFilm.id,
+      slug: dataFilm.slug,
+      poster: dataFilm.thumb_url,
+      title: dataFilm.name,
+      original_name: dataFilm.original_name,
+    };
+
+    if (isSaved) {
+      // Nếu đã lưu, xóa phim khỏi danh sách
+      savedMovies = savedMovies.filter((m: { id: string }) => m.id !== dataFilm.id);
+      setIsSaved(false);
+      toast.error("Đã xóa khỏi danh sách!");
+    } else {
+      // Nếu chưa lưu, thêm phim vào danh sách
+      savedMovies.push(movieData);
+      setIsSaved(true);
+      toast.success("Đã lưu phim thành công!");
+    }
+
+    localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
+  };
+
+
 
   if (isLoading) return <div className="text-white text-center mt-10">Đang tải thông tin phim...</div>;
   if (isError || !dataFilm) return <div className="text-red-500 text-center mt-10">Không tìm thấy phim!</div>;
@@ -35,6 +71,10 @@ const Detail = () => {
         <meta name="description" content={`${dataFilm.description} | Xem phim miễn phí tại CNCPhim`} />
       </Helmet>
 
+      {/* Thông báo */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      
       {/* Ảnh nền của phim */}
       <div
         className="h-[600px] -mt-[56px] bg-cover bg-no-repeat bg-[50%_0] relative before:content-[''] before:absolute before:w-full before:top-0 before:bottom-0 before:bg-[#020d18bf]"
@@ -97,11 +137,15 @@ const Detail = () => {
                 </div>
               </FacebookShareButton>
               {/* Nút Lưu phim */}
-              <button className="text-white bg-[#ff9800] hover:bg-[#e68900] rounded px-5 py-2 flex items-center justify-center gap-2 transition">
+              <button
+                onClick={handleSaveMovie}
+                className={`text-white px-5 py-2 rounded flex items-center justify-center gap-2 transition ${isSaved ? 'bg-red-600 hover:bg-red-700' : 'bg-[#ff9800] hover:bg-[#e68900]'
+                  }`}
+              >
                 <svg className="fill-white w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                   <path d="M432 0H80C53.5 0 32 21.5 32 48v416c0 12.5 6.9 24 17.9 30.1s24.3 4.8 34.2-3.2L256 364.3l172 126.6c9.9 7.3 23.1 8.3 34.2 3.2S480 476.5 480 464V48c0-26.5-21.5-48-48-48zM256 313.6L64 464V48h384v416L256 313.6z" />
                 </svg>
-                Lưu phim
+                {isSaved ? 'Đã lưu' : 'Lưu phim'}
               </button>
             </div>
 
@@ -161,8 +205,6 @@ const Detail = () => {
 
             {/* Mô tả phim */}
             <p className="text-[#b5b5b5]" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(dataFilm.description) }} />
-
-
           </div>
         </div>
       </div>

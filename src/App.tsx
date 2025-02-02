@@ -10,7 +10,7 @@ const Detail = lazy(() => import('./pages/Detail'))
 const Film = lazy(() => import('./pages/Film'))
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
-
+const SavedMovies = lazy(() => import('./pages/SavedMovies'))
 // Loading Page Component
 function LoadingPage() {
   return (
@@ -84,6 +84,11 @@ function App() {
           path: `${PATH.watch}/${PATH.slug}`,
           element: <SuspenseWithFallback><Film /></SuspenseWithFallback>,
         },
+        {
+          path: '/da-luu',
+          element: <SavedMovies />, // Component hiển thị danh sách phim đã lưu
+        }
+        
 
       ],
     },

@@ -106,17 +106,19 @@ const Header = () => {
         >
           <ul className="flex flex-col text-2xl">
             {[
-              { title: "Phim Mới", path: `${PATH.list}/phim-moi-cap-nhat` }, // ✅ Sửa lỗi
-              { title: "Phim Bộ", path: `${PATH.list}/phim-bo` }, // ✅ Sửa lỗi
-              { title: "Phim Lẻ", path: `${PATH.list}/phim-le` }, // ✅ Sửa lỗi
-              { title: "TV Shows", path: `${PATH.list}/tv-shows` }, // ✅ Sửa lỗi
-              { title: "Hoạt Hình", path: `${PATH.list}/hoat-hinh` }, // ✅ Sửa lỗi
+              { title: "Phim Mới", path: `${PATH.list}/phim-moi-cap-nhat` }, 
+              { title: "Phim Bộ", path: `${PATH.list}/phim-bo` }, 
+              { title: "Phim Lẻ", path: `${PATH.list}/phim-le` }, 
+              { title: "TV Shows", path: `${PATH.list}/tv-shows` }, 
+              { title: "Hoạt Hình", path: `${PATH.list}/hoat-hinh` },
+              { title: "Phim đã lưu", path: "/da-luu" },
+              { title: "Lịch sử xem", path: "/lich-su" },
             ].map(({ title, path }) => (
               <li key={title}>
                 <NavLink
                   title={`Xem ${title} tại Phimmoi`}
                   to={{
-                    pathname: path, // ✅ Đã sửa lỗi
+                    pathname: path, 
                     search: createSearchParams({ page: "1" }).toString(),
                   }}
                   className={({ isActive }) =>
