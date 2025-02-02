@@ -38,10 +38,10 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>Xem phim Online miễn phí - HTPhim</title>
+        <title>Xem phim Online miễn phí - CNCPhim</title>
         <meta
           name="description"
-          content="Web xem phim online miễn phí lớn nhất được cập nhật liên tục mỗi ngày - Cùng tham gia xem phim và thảo luận với hơn 10 triệu thành viên 🎉 tại VPhim ❤️💛💚"
+          content="Web xem phim online miễn phí lớn nhất được cập nhật liên tục mỗi ngày - Cùng tham gia xem phim và thảo luận với hơn 10 triệu thành viên 🎉 tại CNCPhim ❤️💛💚"
         />
       </Helmet>
       <div className="container mt-[45px] px-4">
