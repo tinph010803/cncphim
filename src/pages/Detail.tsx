@@ -1,9 +1,8 @@
 import DOMPurify from 'dompurify';
 import { useQuery } from 'react-query';
-import { Link, useParams, createSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import FacebookShareButton from 'react-share/es/FacebookShareButton';
-import { Fragment } from 'react';
 import axios from 'axios';
 import PATH from 'src/utils/path';
 
@@ -120,29 +119,12 @@ const Detail = () => {
               {/* Quốc gia */}
               <p className="mb-1 text-white uppercase">
                 <span className="w-[120px] inline-block text-[#7a7a7a]">Quốc gia</span>
-                {dataFilm.category[4]?.list?.map((item: any, index: number) =>
-                  index > 0 ? (
-                    <Fragment key={item.id}>
-                      {', '}
-                      <Link
-                        title={`Tìm kiếm ${item.name}`}
-                        to={`${PATH.list}/${PATH.country}/${item.id}`}
-                        className="font-medium capitalize hover:underline"
-                      >
-                        {item.name}
-                      </Link>
-                    </Fragment>
-                  ) : (
-                    <Link
-                      title={`Tìm kiếm ${item.name}`}
-                      key={item.id}
-                      to={`${PATH.list}/${PATH.country}/${item.id}`}
-                      className="font-medium capitalize hover:underline"
-                    >
-                      {item.name}
-                    </Link>
-                  )
-                )}
+                {dataFilm.category[4]?.list?.map((item: any, index: number) => (
+                  <span key={item.id} className="font-medium capitalize text-white">
+                    {index > 0 && ' , '}
+                    {item.name}
+                  </span>
+                ))}
               </p>
 
               {/* Năm phát hành */}
@@ -161,18 +143,9 @@ const Detail = () => {
               <p className="text-[#7a7a7a] uppercase">
                 <span className="w-[120px] inline-block">Thể loại</span>
                 {dataFilm.category?.["2"]?.list?.map((item: { id: string; name: string }, index: number) => (
-                  <span key={item.id}>
+                  <span key={item.id} className="font-medium capitalize text-white">
                     {index > 0 && ' , '}
-                    <Link
-                      title={`Tìm kiếm thể loại ${item.name}`}
-                      to={{
-                        pathname: `${PATH.list}/${PATH.genres}`,
-                        search: createSearchParams({ category: item.id, page: '1' }).toString(),
-                      }}
-                      className="font-medium capitalize hover:underline text-white"
-                    >
-                      {item.name}
-                    </Link>
+                    {item.name}
                   </span>
                 ))}
               </p>
