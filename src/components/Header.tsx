@@ -17,11 +17,14 @@ const Header = () => {
     setOpenNav(false);
   }, [pathname]);
 
-  const handleChangeHeader = () => {
-    setHeader(window.scrollY >= 80);
-  };
+  useEffect(() => {
+    const handleChangeHeader = () => {
+      setHeader(window.scrollY >= 80);
+    };
 
-  window.addEventListener("scroll", handleChangeHeader);
+    window.addEventListener("scroll", handleChangeHeader);
+    return () => window.removeEventListener("scroll", handleChangeHeader);
+  }, []);
 
   return (
     <header
@@ -103,17 +106,19 @@ const Header = () => {
         >
           <ul className="flex flex-col text-2xl">
             {[
-              
-              { title: "Phim Mới", path: `${PATH.list}/${PATH.new}` },
-              { title: "Phim Bộ", path: `${PATH.list}/${PATH.series}` },
-              { title: "Phim Lẻ", path: `${PATH.list}/${PATH.odd}` },
-              { title: "TV Shows", path: `${PATH.list}/${PATH.tvShows}` },
-              { title: "Hoạt Hình", path: `${PATH.list}/${PATH.anime}` },
+              { title: "Phim Mới", path: `${PATH.list}/phim-moi-cap-nhat` }, // ✅ Sửa lỗi
+              { title: "Phim Bộ", path: `${PATH.list}/phim-bo` }, // ✅ Sửa lỗi
+              { title: "Phim Lẻ", path: `${PATH.list}/phim-le` }, // ✅ Sửa lỗi
+              { title: "TV Shows", path: `${PATH.list}/tv-shows` }, // ✅ Sửa lỗi
+              { title: "Hoạt Hình", path: `${PATH.list}/hoat-hinh` }, // ✅ Sửa lỗi
             ].map(({ title, path }) => (
               <li key={title}>
                 <NavLink
                   title={`Xem ${title} tại Phimmoi`}
-                  to={{ pathname: `/${path}`, search: createSearchParams({ page: "1" }).toString() }}
+                  to={{
+                    pathname: path, // ✅ Đã sửa lỗi
+                    search: createSearchParams({ page: "1" }).toString(),
+                  }}
                   className={({ isActive }) =>
                     `hover:text-blue-600 hover:bg-blue-600/20 block text-center p-4 ${
                       isActive ? "text-blue-600" : ""
