@@ -87,7 +87,7 @@ const Detail = () => {
             </div>
 
             {/* Chia sẻ Facebook */}
-            <div className="block lg:flex items-start justify-between gap-6">
+            <div className="block lg:flex items-start gap-6">
               <FacebookShareButton url={`https://cncphim.site/${PATH.film}/${slug}`} className="flex-shrink-0 mb-6 md:mb-14">
                 <div className="text-white bg-[#485fc7] rounded px-4 py-2 flex items-center justify-center gap-3">
                   <svg className="fill-white w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -96,6 +96,13 @@ const Detail = () => {
                   Chia sẻ
                 </div>
               </FacebookShareButton>
+              {/* Nút Lưu phim */}
+              <button className="text-white bg-[#ff9800] hover:bg-[#e68900] rounded px-5 py-2 flex items-center justify-center gap-2 transition">
+                <svg className="fill-white w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path d="M432 0H80C53.5 0 32 21.5 32 48v416c0 12.5 6.9 24 17.9 30.1s24.3 4.8 34.2-3.2L256 364.3l172 126.6c9.9 7.3 23.1 8.3 34.2 3.2S480 476.5 480 464V48c0-26.5-21.5-48-48-48zM256 313.6L64 464V48h384v416L256 313.6z" />
+                </svg>
+                Lưu phim
+              </button>
             </div>
 
 

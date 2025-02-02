@@ -90,6 +90,7 @@ const Navbar = () => {
             </svg>
           </NavLink>
         </li>
+       
       </ul>
     </nav>
   );
