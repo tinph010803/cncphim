@@ -21,7 +21,11 @@ const Film = () => {
   const [selectedEpisode, setSelectedEpisode] = useState<string>('');
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { slug } = useParams();
-
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [episodeNote, setEpisodeNote] = useState("");
+  const [minutes, setMinutes] = useState("");
+  const [seconds, setSeconds] = useState("");
+  const [savedNote, setSavedNote] = useState("");
   // Gọi API chi tiết phim
   const { data, isLoading, isError } = useQuery(['filmDetail', slug], () => fetchFilmDetails(slug as string), {
     staleTime: 3 * 60 * 1000,
@@ -40,6 +44,63 @@ const Film = () => {
       }
     }
   }, [dataFilm]);
+
+  useEffect(() => {
+    setStartTime(new Date().getTime());
+  }, []);
+
+  // Hàm lưu thời gian xem vào localStorage
+  const saveWatchTime = () => {
+    if (startTime) {
+      const endTime = new Date().getTime();
+      const watchedTime = Math.floor((endTime - startTime) / 1000); // Số giây đã xem
+
+      if (watchedTime < 5) return; // Không lưu nếu xem quá ít
+
+      const watchHistory = JSON.parse(localStorage.getItem("watchHistory") || "[]");
+
+      // Kiểm tra xem phim đã có trong lịch sử chưa
+      const existingMovieIndex = watchHistory.findIndex(
+        (movie: { id: string; episode: string }) => movie.id === dataFilm.id && movie.episode === selectedEpisode
+      );
+
+      if (existingMovieIndex !== -1) {
+        watchHistory[existingMovieIndex].time += watchedTime;
+      } else {
+        watchHistory.push({
+          id: dataFilm.id,
+          slug: dataFilm.slug,
+          poster: dataFilm.thumb_url,
+          title: dataFilm.name,
+          episode: selectedEpisode, // Lưu tập đang xem
+          time: watchedTime,
+        });
+      }
+
+      localStorage.setItem("watchHistory", JSON.stringify(watchHistory));
+    }
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveWatchTime();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        saveWatchTime();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [startTime, dataFilm, selectedEpisode]);
+
 
   const handleServerChange = (serverName: string) => {
     const newServer = dataFilm.episodes.find((s: { server_name: string; items: { name: string; embed: string }[] }) => s.server_name === serverName);
@@ -62,6 +123,72 @@ const Film = () => {
     setEpisode(embedUrl);
     setSelectedEpisode(epName);
   };
+
+
+  // Load dữ liệu đã lưu trước đó
+  useEffect(() => {
+    const savedData = JSON.parse(localStorage.getItem(`filmNote_${slug}`) || "null");
+    if (savedData) {
+      setEpisodeNote(savedData.episode);
+      setMinutes(savedData.minutes);
+      setSeconds(savedData.seconds);
+      setSavedNote(`Tập: ${savedData.episode} - Đã xem đến: ${savedData.minutes} phút ${savedData.seconds} giây`);
+    }
+  }, [slug]);
+
+  const saveNote = () => {
+    if (!episodeNote || isNaN(parseInt(minutes)) || isNaN(parseInt(seconds))) {
+      alert("Vui lòng nhập tập và thời gian hợp lệ!");
+      return;
+    }
+
+    const totalSeconds = parseInt(minutes) * 60 + parseInt(seconds);
+  
+    const noteData = {
+      episode: episodeNote,
+      minutes: parseInt(minutes),
+      seconds: parseInt(seconds),
+      totalSeconds: totalSeconds,
+    };
+  
+    // Lưu ghi chú vào localStorage
+    localStorage.setItem(`filmNote_${slug}`, JSON.stringify(noteData));
+  
+    // Cập nhật watchHistory trong localStorage
+    const watchHistory = JSON.parse(localStorage.getItem("watchHistory") || "[]");
+
+    // Kiểm tra xem phim đã có trong danh sách chưa
+    const movieIndex = watchHistory.findIndex((movie: { slug: string }) => movie.slug === slug);
+
+    if (movieIndex !== -1) {
+        watchHistory[movieIndex].episode = episodeNote;
+        watchHistory[movieIndex].time = totalSeconds;
+    } else {
+        watchHistory.push({
+            id: dataFilm.id,
+            slug: dataFilm.slug,
+            poster: dataFilm.thumb_url,
+            title: dataFilm.name,
+            episode: episodeNote,
+            time: totalSeconds,
+        });
+    }
+
+    localStorage.setItem("watchHistory", JSON.stringify(watchHistory));
+
+    // Phát sự kiện để trang WatchHistory cập nhật ngay
+    window.dispatchEvent(new Event("storage"));
+
+    setSavedNote(`📌 Tập: ${episodeNote} - ⏳ ${formatTime(parseInt(minutes), parseInt(seconds))}`);
+};
+
+  
+  // Hàm định dạng thời gian hiển thị
+  const formatTime = (m: number, s: number) => {
+    return `${m}:${s < 10 ? `0${s}` : s}`;
+  };
+  
+
 
   if (isLoading) return <div className="text-white text-center mt-10">Đang tải thông tin phim...</div>;
   if (isError || !dataFilm) return <div className="text-red-500 text-center mt-10">Không tìm thấy phim!</div>;
@@ -116,7 +243,7 @@ const Film = () => {
           </div>
         )}
 
-      
+
 
         {/* Thông tin phim */}
         <div className="container px-4 mt-6">
@@ -150,7 +277,42 @@ const Film = () => {
                 </div>
               </FacebookShareButton>
             </div>
-            
+            <div className="mt-4 p-4 bg-gray-800 text-white rounded-md">
+              <h3 className="text-lg font-bold mb-2">📌 Ghi chú thời gian xem</h3>
+
+              {savedNote && <p className="text-green-400 mb-3">{savedNote}</p>}
+
+              <div className="flex flex-wrap gap-2">
+                <input
+                  type="text"
+                  placeholder="Tập số"
+                  value={episodeNote}
+                  onChange={(e) => setEpisodeNote(e.target.value)}
+                  className="p-2 rounded bg-gray-700 text-white border border-gray-600"
+                />
+                <input
+                  type="number"
+                  placeholder="Phút"
+                  value={minutes}
+                  onChange={(e) => setMinutes(e.target.value)}
+                  className="p-2 w-20 rounded bg-gray-700 text-white border border-gray-600"
+                />
+                <input
+                  type="number"
+                  placeholder="Giây"
+                  value={seconds}
+                  onChange={(e) => setSeconds(e.target.value)}
+                  className="p-2 w-20 rounded bg-gray-700 text-white border border-gray-600"
+                />
+                <button
+                  onClick={saveNote}
+                  className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white font-bold"
+                >
+                  Lưu
+                </button>
+              </div>
+            </div>
+
           </div>
           {/* Quay lại trang chi tiết phim */}
           <Link to={`${PATH.film}/${slug}`} className="flex items-center gap-2 text-[#428bca] hover:text-lime-400 pt-6 md:pt-0">
@@ -160,8 +322,8 @@ const Film = () => {
             Về trang giới thiệu phim
           </Link>
         </div>
-          {/* Chọn tập */}
-          {dataFilm.episodes.length > 0 && (
+        {/* Chọn tập */}
+        {dataFilm.episodes.length > 0 && (
           <div className="container px-4 mt-6">
             <h2 className="text-white text-lg mb-2">Danh sách tập:</h2>
             <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-12 gap-2">

@@ -11,6 +11,7 @@ const Film = lazy(() => import('./pages/Film'))
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const SavedMovies = lazy(() => import('./pages/SavedMovies'))
+const WatchHistory = lazy(() => import('./pages/WatchHistory'))
 // Loading Page Component
 function LoadingPage() {
   return (
@@ -87,8 +88,11 @@ function App() {
         {
           path: '/da-luu',
           element: <SavedMovies />, // Component hiển thị danh sách phim đã lưu
-        }
-        
+        },
+        {
+          path: '/lich-su',
+          element: <WatchHistory />, // Hiển thị trang lịch sử xem
+        },
 
       ],
     },

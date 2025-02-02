@@ -59,7 +59,7 @@ const Filter = () => {
 
     let pathname = `${PATH.list}/${type || "phim-moi"}`;
 
-    // ✅ Nếu chọn Loại Phim → Chuyển đến NavBar của loại phim
+    //  Nếu chọn Loại Phim → Chuyển đến NavBar của loại phim
     if (newParams.type) {
       pathname = `${PATH.list}/${newParams.type}`;
     }
