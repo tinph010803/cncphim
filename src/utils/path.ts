@@ -10,8 +10,8 @@ const PATH = {
   odd: 'films/danh-sach/phim-le', // API mới cho phim lẻ
   tvShows: 'films/danh-sach/tv-shows',
   anime: 'films/danh-sach/hoat-hinh',
-  genres: 'films/the-loai', // API mới cho thể loại
-  country: 'films/quoc-gia', // API mới cho quốc gia
+  genres: "/danh-sach/the-loai", // ✅ Đảm bảo format chính xác
+  country: "/danh-sach/quoc-gia", // ✅ Đảm bảo format chính xác
   hot: 'films/hot',
   film: '/film', // API mới cho chi tiết phim
   login: '/login',

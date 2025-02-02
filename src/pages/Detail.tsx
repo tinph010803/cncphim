@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { useQuery } from 'react-query';
-import { Link,  useParams } from 'react-router-dom';
+import { Link, useParams, createSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import FacebookShareButton from 'react-share/es/FacebookShareButton';
 import { Fragment } from 'react';
@@ -156,12 +156,33 @@ const Detail = () => {
                   {dataFilm.category[3]?.list[0]?.name || 'Đang cập nhật'}
                 </Link>
               </p>
+
+              {/* Thể loại */}
+              <p className="text-[#7a7a7a] uppercase">
+                <span className="w-[120px] inline-block">Thể loại</span>
+                {dataFilm.category?.["2"]?.list?.map((item: { id: string; name: string }, index: number) => (
+                  <span key={item.id}>
+                    {index > 0 && ' , '}
+                    <Link
+                      title={`Tìm kiếm thể loại ${item.name}`}
+                      to={{
+                        pathname: `${PATH.list}/${PATH.genres}`,
+                        search: createSearchParams({ category: item.id, page: '1' }).toString(),
+                      }}
+                      className="font-medium capitalize hover:underline text-white"
+                    >
+                      {item.name}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+
             </div>
 
             {/* Mô tả phim */}
             <p className="text-[#b5b5b5]" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(dataFilm.description) }} />
 
-        
+
           </div>
         </div>
       </div>

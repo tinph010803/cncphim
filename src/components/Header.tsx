@@ -103,7 +103,7 @@ const Header = () => {
         >
           <ul className="flex flex-col text-2xl">
             {[
-              { title: "Phim Hot", path: PATH.hot },
+              
               { title: "Phim Mới", path: `${PATH.list}/${PATH.new}` },
               { title: "Phim Bộ", path: `${PATH.list}/${PATH.series}` },
               { title: "Phim Lẻ", path: `${PATH.list}/${PATH.odd}` },

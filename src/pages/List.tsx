@@ -1,36 +1,58 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import axios from 'axios';
-import { Card, Filter } from 'src/components';
-import Pagination from 'src/components/Pagination';
+import { useParams, useSearchParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import axios from "axios";
+import { Card, Filter } from "src/components";
+import Pagination from "src/components/Pagination";
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://phim.nguonc.com/api';
+const API_URL = import.meta.env.VITE_API_URL || "https://phim.nguonc.com/api";
 
-// Xác định API phù hợp dựa trên type
-const getFilmApiUrl = (type: string, page: number) => {
-  if (type === 'phim-moi-cap-nhat') {
-    return `${API_URL}/films/phim-moi-cap-nhat?page=${page}`;
-  } else {
-    return `${API_URL}/films/danh-sach/${type}?page=${page}`;
+// Xác định API đúng dựa trên Loại phim, Thể loại, Quốc gia, Năm phát hành
+const getFilmApiUrl = (type: string | undefined, params: URLSearchParams, page: number) => {
+  const category = params.get("category");
+  const country = params.get("country");
+  const year = params.get("year");
+
+  let url = `${API_URL}/films/phim-moi-cap-nhat?page=${page}`; // ⚡ Mặc định là Phim Mới
+
+  // Nếu type là phim-bo, phim-le, hoat-hinh, tv-shows
+  if (type && ["phim-bo", "phim-le", "hoat-hinh", "tv-shows"].includes(type)) {
+    url = `${API_URL}/films/danh-sach/${type}?page=${page}`;
   }
+
+  // Nếu có category (thể loại)
+  if (category) {
+    url = `${API_URL}/films/the-loai/${category}?page=${page}`;
+  }
+
+  // Nếu có country (quốc gia)
+  if (country) {
+    url = `${API_URL}/films/quoc-gia/${country}?page=${page}`;
+  }
+
+  //  Nếu có year (năm phát hành)
+  if (year) {
+    url = `${API_URL}/films/nam-phat-hanh/${year}?page=${page}`;
+  }
+
+  return url;
 };
 
-// Hàm gọi API
-const fetchFilms = async (type: string, page: number) => {
-  const url = getFilmApiUrl(type, page);
+// ✅ Hàm gọi API danh sách phim
+const fetchFilms = async (type: string | undefined, params: URLSearchParams, page: number) => {
+  const url = getFilmApiUrl(type, params, page);
   const response = await axios.get(url);
   return response.data;
 };
 
 const List = () => {
-  const { type } = useParams(); // Lấy loại phim từ URL
+  const { type, slug } = useParams(); // Lấy type và slug từ URL
   const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
+  const page = Number(searchParams.get("page")) || 1;
 
-  // Gọi API danh sách phim dựa theo type và page
+  // Gọi API danh sách phim dựa theo type, searchParams, page
   const { data, isLoading, isError } = useQuery(
-    ['films', type, page],
-    () => fetchFilms(type || 'phim-moi-cap-nhat', page),
+    ["films", type, searchParams.toString(), page],
+    () => fetchFilms(type, searchParams, page),
     { staleTime: 3 * 60 * 1000 }
   );
 
@@ -39,7 +61,7 @@ const List = () => {
 
   return (
     <div className="container px-4 mt-[45px]">
-      <Filter /> {/* Bộ lọc thể loại, quốc gia */}
+      <Filter /> {/* Bộ lọc Thể loại, Quốc gia, Năm phát hành, Loại phim */}
 
       {/* Nội dung danh sách phim */}
       {isLoading ? (
@@ -49,7 +71,21 @@ const List = () => {
       ) : (
         <>
           <h2 className="text-2xl font-bold text-white mb-4">
-            {type === 'phim-moi-cap-nhat' ? 'Phim Mới Cập Nhật' : 'Danh Sách Phim'}
+            {type === "quoc-gia"
+              ? `Phim theo Quốc gia: ${slug ? decodeURIComponent(slug) : ""}`
+              : type === "the-loai"
+              ? `Phim thể loại: ${slug ? decodeURIComponent(slug) : ""}`
+              : type === "nam-phat-hanh"
+              ? `Phim Năm ${slug}`
+              : type === "phim-le"
+              ? "Phim Lẻ"
+              : type === "phim-bo"
+              ? "Phim Bộ"
+              : type === "hoat-hinh"
+              ? "Phim Hoạt Hình"
+              : type === "tv-shows"
+              ? "TV Shows"
+              : "Phim Mới Cập Nhật"}
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">

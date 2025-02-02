@@ -46,19 +46,6 @@ function SuspenseWithFallback({ children }: { children: ReactNode }) {
 // Các route cho dự án
 function App() {
   const router = createBrowserRouter([
-    // {
-    //   path: '/', // Đổi path gốc thành '/'
-    //   element: <SuspenseWithFallback><Login /></SuspenseWithFallback>,  // Hiển thị trang đăng nhập ngay lập tức
-    // },
-    // {
-    //   path: '/login',
-    //   element: <SuspenseWithFallback><Login /></SuspenseWithFallback>,
-    // },
-    // {
-    //   path: '/register',
-    //   element: <SuspenseWithFallback><Register /></SuspenseWithFallback>,
-    // },
-    
     {
       path: '/',
       element: (
@@ -73,10 +60,18 @@ function App() {
           element: <SuspenseWithFallback><Home /></SuspenseWithFallback>,
         },
         {
-          path: `${PATH.list}/${PATH.type}`,
+          path: `${PATH.list}/:type?`, // Thêm `:type?` vào đường dẫn
           element: <SuspenseWithFallback><List /></SuspenseWithFallback>,
         },
-        
+        {
+          path: `${PATH.list}/${PATH.genres}/:slug`, // Thể loại phim
+          element: <SuspenseWithFallback><List /></SuspenseWithFallback>,
+        },
+        {
+          path: `${PATH.list}/${PATH.country}/:slug`, // Quốc gia
+          element: <SuspenseWithFallback><List /></SuspenseWithFallback>,
+        },
+
         {
           path: PATH.search,
           element: <SuspenseWithFallback><Search /></SuspenseWithFallback>,

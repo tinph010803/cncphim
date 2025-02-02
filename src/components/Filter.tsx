@@ -1,8 +1,6 @@
-import { useParams, useNavigate, createSearchParams } from "react-router-dom";
+import { useParams, useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
 import PATH from "src/utils/path";
-import { useQueryConfig } from "src/hooks";
 
-// Danh sách thể loại tĩnh (chưa có API riêng)
 const genresList = [
   { name: "Hành Động", slug: "hanh-dong" },
   { name: "Phiêu Lưu", slug: "phieu-luu" },
@@ -29,14 +27,14 @@ const genresList = [
 ];
 
 const countriesList = [
+  { name: "Việt Nam", slug: "viet-nam" },
+  { name: "Hàn Quốc", slug: "han-quoc" },
   { name: "Âu Mỹ", slug: "au-my" },
   { name: "Anh", slug: "anh" },
   { name: "Trung Quốc", slug: "trung-quoc" },
   { name: "Indonesia", slug: "indonesia" },
-  { name: "Việt Nam", slug: "viet-nam" },
   { name: "Pháp", slug: "phap" },
   { name: "Hồng Kông", slug: "hong-kong" },
-  { name: "Hàn Quốc", slug: "han-quoc" },
   { name: "Nhật Bản", slug: "nhat-ban" },
   { name: "Thái Lan", slug: "thai-lan" },
   { name: "Đài Loan", slug: "dai-loan" },
@@ -47,92 +45,80 @@ const countriesList = [
   { name: "Quốc gia khác", slug: "khac" },
 ];
 
-
 const Filter = () => {
   const { type } = useParams();
   const navigate = useNavigate();
-  const queryConfig = useQueryConfig();
+  const [searchParams] = useSearchParams();
 
-  // ✅ Cập nhật filter khi chọn thể loại hoặc quốc gia
   const updateFilter = (newParams: Record<string, string>) => {
+    const updatedParams = {
+      ...Object.fromEntries(searchParams.entries()), // Giữ lại các bộ lọc khác
+      ...newParams,
+      page: "1",
+    };
+
+    let pathname = `${PATH.list}/${type || "phim-moi"}`;
+
+    // ✅ Nếu chọn Loại Phim → Chuyển đến NavBar của loại phim
+    if (newParams.type) {
+      pathname = `${PATH.list}/${newParams.type}`;
+    }
+
     navigate({
-      pathname: `${PATH.list}/${type ? type : "phim-moi"}`,
-      search: createSearchParams({
-        ...queryConfig,
-        ...newParams,
-        page: "1",
-      }).toString(),
+      pathname,
+      search: createSearchParams(updatedParams).toString(),
     });
   };
 
   return (
-    <div className="bg-[#0e274073] py-4 px-[22px] grid grid-cols-2 md:grid-cols-5 items-center gap-[22px] rounded-md">
+    <div className="bg-[#0e274073] py-4 px-[22px] grid grid-cols-2 md:grid-cols-5 gap-[22px] rounded-md">
       {/* Loại phim */}
       <FilterSelect
         label="Loại phim"
         value={type || ""}
         onChange={(e) => updateFilter({ type: e.target.value })}
         options={[
-          { value: "phim-moi", label: "- Tất cả -" },
-          { value: "phim-le", label: "Phim lẻ" },
-          { value: "phim-bo", label: "Phim bộ" },
-          { value: "hoat-hinh", label: "Hoạt hình" },
-          { value: "tv-shows", label: "TV shows" },
+          { value: "phim-moi-cap-nhat", label: "- Tất cả -" },
+          { value: "phim-moi-cap-nhat", label: "Phim Mới" },
+          { value: "phim-le", label: "Phim Lẻ" },
+          { value: "phim-bo", label: "Phim Bộ" },
+          { value: "hoat-hinh", label: "Hoạt Hình" },
+          { value: "tv-shows", label: "TV Shows" },
         ]}
       />
 
       {/* Thể loại */}
       <FilterSelect
         label="Thể loại"
-        value={queryConfig.category || ""}
+        value={searchParams.get("category") || ""}
         onChange={(e) => updateFilter({ category: e.target.value })}
-        options={[
-          { value: "", label: "- Tất cả -" },
-          ...genresList.map((g) => ({ value: g.slug, label: g.name })),
-        ]}
+        options={[{ value: "", label: "- Tất cả -" }, ...genresList.map((g) => ({ value: g.slug, label: g.name }))]}
       />
 
-     {/* Quốc gia */}
-<FilterSelect
-  label="Quốc gia"
-  value={queryConfig.country || ""}
-  onChange={(e) => updateFilter({ country: e.target.value })}
-  options={[
-    { value: "", label: "- Tất cả -" },
-    ...countriesList.map((c) => ({ value: c.slug, label: c.name })),
-  ]}
-/>
-
+      {/* Quốc gia */}
+      <FilterSelect
+        label="Quốc gia"
+        value={searchParams.get("country") || ""}
+        onChange={(e) => updateFilter({ country: e.target.value })}
+        options={[{ value: "", label: "- Tất cả -" }, ...countriesList.map((c) => ({ value: c.slug, label: c.name }))]}
+      />
 
       {/* Năm phát hành */}
       <FilterSelect
         label="Năm"
-        value={queryConfig.year || ""}
+        value={searchParams.get("year") || ""}
         onChange={(e) => updateFilter({ year: e.target.value })}
         options={[
           { value: "", label: "- Tất cả -" },
           ...Array(14)
             .fill(0)
-            .map((_, i) => ({ value: `${2023 - i}`, label: `${2023 - i}` })),
-        ]}
-      />
-
-      {/* Sắp xếp */}
-      <FilterSelect
-        label="Sắp xếp"
-        value={queryConfig.sort_field || "modified.time"}
-        onChange={(e) => updateFilter({ sort_field: e.target.value })}
-        options={[
-          { value: "modified.time", label: "Ngày cập nhật" },
-          { value: "year", label: "Ngày phát hành" },
-          { value: "view", label: "Lượt xem" },
+            .map((_, i) => ({ value: `${2025 - i}`, label: `${2025 - i}` })),
         ]}
       />
     </div>
   );
 };
 
-// ✅ Component Dropdown tái sử dụng
 const FilterSelect = ({
   label,
   value,
@@ -143,25 +129,19 @@ const FilterSelect = ({
   value: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string; label: string }[];
-}) => {
-  return (
-    <div className="text-lg flex flex-col">
-      <label className="mb-2 text-white">{label}:</label>
-      <div className="relative w-full before:content-[''] before:absolute before:border-[3px] before:rounded-sm before:rotate-45 before:w-3 before:h-3 before:top-[25%] before:right-4 before:border-t-transparent before:border-l-transparent before:border-blue-600 before:z-[4]">
-        <select
-          onChange={onChange}
-          value={value}
-          className="cursor-pointer appearance-none w-full rounded-md outline-none py-[7px] pl-[11px] pr-[40px]"
-        >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+}) => (
+  <div className="text-lg flex flex-col">
+    <label className="mb-2 text-white">{label}:</label>
+    <div className="relative w-full">
+      <select onChange={onChange} value={value} className="cursor-pointer appearance-none w-full rounded-md outline-none py-[7px] px-[11px]">
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
     </div>
-  );
-};
+  </div>
+);
 
 export default Filter;
