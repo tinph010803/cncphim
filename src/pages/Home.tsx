@@ -13,6 +13,7 @@ import jujussuLogo from 'src/img/logo/chu_thuat_hoi_chien.png';
 import jujussuVideo from 'src/img/videos/chu_thuat_hoi_chien.mp4';
 import saoggo2Logo from 'src/img/logo/sword_art_online_ggo2.png';
 import saoggo2Video from 'src/img/videos/sword_art_online_ggo2.mp4';
+import sutdygroupVideo from 'src/img/videos/study_group.mp4';
 import playIcon from 'src/img/play.png';
 import info from 'src/img/info.png';
 
@@ -27,7 +28,7 @@ const fetchFilms = async (type: string, page = 1) => {
 const videoList = [
   {
     title: "Study group",
-    videoSrc: "https://rr9---sn-8pxuuxa-i5oz7.googlevideo.com/videoplayback?expire=1739643698&ei=0oawZ8SPHqO02roP6syZ8A8&ip=171.243.48.191&id=o-ACbtuXR7f0F1gXC1zNwsHbkAKGJFQay_i9PLELkKPC8H&itag=137&aitags=134%2C136%2C137%2C160%2C243&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&met=1739622098%2C&mh=C9&mm=31%2C29&mn=sn-8pxuuxa-i5oz7%2Csn-8pxuuxa-nbo6l&ms=au%2Crdu&mv=m&mvi=9&pl=24&rms=au%2Cau&gcr=vn&initcwndbps=2958750&bui=AUWDL3wF8GKFE2YPeiSdrouj3NWzpEStzKPkpgllSDyiY036p0dkhizwvbQbF-KWtTsa0HZBdDle2C7v&spc=RjZbSVLGkfGvzutPJee0RP7b_etlgdoCH8nK_rAD1xxeb3-4Ye29yc7Ho7gK_yk&vprv=1&svpuc=1&mime=video%2Fmp4&ns=0QDZNDyg9007YCEJjhHFlzQQ&rqh=1&gir=yes&clen=14759947&dur=45.666&lmt=1739176503009642&mt=1739621573&fvip=3&keepalive=yes&fexp=51326932%2C51331020&c=MWEB&sefc=1&txp=6209224&n=vYMhQQekZ2O20A&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cxpc%2Cgcr%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRgIhALbhdlaJs5rsJ8bTD_1J9T65nRIBNfeZSiKM7gPabbyWAiEAxpTOqXNUgu2JIyb0KQ2meubuaeOCT1LH-m7thlvvKpo%3D&lsparams=met%2Cmh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Crms%2Cinitcwndbps&lsig=AGluJ3MwRQIgQ79d4pDiOnbDZ4wcmuQOiSgltIii5p4CCu8n2SQ8XPUCIQDAIOdqqReFfB8MZPDLrgcxccXse3i0cNoFY1gWTEpFuQ%3D%3D",
+    videoSrc: sutdygroupVideo,
     logo: "https://i.postimg.cc/yYL48WTq/taoanhdep-sticker-8248.png",
     watchLink: "/xem-phim/hoc-sinh-ca-biet",
     detailLink: "/film/hoc-sinh-ca-biet",
@@ -115,7 +116,7 @@ const Home = () => {
         />
       </Helmet>
 
-      <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
+      <div className="relative w-full h-[4000px] md:h-[500px] lg:h-[600px] overflow-hidden">
         {/* Video background */}
         <video
           key={currentVideo.videoSrc}
@@ -135,7 +136,7 @@ const Home = () => {
           <div className="max-w-lg">
             {/* Hiển thị vị trí video hiện tại */}
             <img src={currentVideo.logo} alt="Logo" className="w-[250px] md:w-[300px] lg:w-[350px] mb-4 mx-auto" />
-            <p className="text-lg mt-4">{currentVideo.description}</p>
+            <p className="text-lg mt-4 hidden sm:block">{currentVideo.description}</p>
             <div className="mt-6 items-center justify-start space-x-4 sm:justify-center sm:space-x-2 sm:space-y-0">
               {/* Nút "Phát" */}
               <button
@@ -184,7 +185,7 @@ const Home = () => {
         {/* Phim Lẻ Mới Cập Nhật */}
         <div className="mt-8">
           {title({ title: 'Phim lẻ mới cập nhật', titleSmall: 'Phim lẻ mới', link: 'phim-le' })}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-[22px] py-3">
+          <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-[22px] py-3">
             {dataFilmOddNew ? (
               dataFilmOddNew.items.slice(0, 10).map((item: any) => <Card key={item.slug} data={item} />)
             ) : (
