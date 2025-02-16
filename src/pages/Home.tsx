@@ -1,5 +1,5 @@
 // import { Card, Filter } from 'src/components';
-import { Card } from 'src/components';
+import { Card, Filter } from 'src/components';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { Link, createSearchParams, useNavigate } from 'react-router-dom';
@@ -115,8 +115,12 @@ const Home = () => {
           content="Web xem phim online miễn phí lớn nhất được cập nhật liên tục mỗi ngày - Cùng tham gia xem phim và thảo luận với hơn 10 triệu thành viên 🎉 tại CNCPhim ❤️💛💚"
         />
       </Helmet>
-
-      <div className="relative w-full h-[4000px] md:h-[500px] lg:h-[600px] overflow-hidden">
+      {/* Hiển thị Filter trên Mobile */}
+      <div className="md:hidden">
+        <Filter />
+      </div>
+      {/* Chỉ hiển thị trên Desktop, Ẩn trên Mobile */}
+      <div className="hidden md:block relative w-full h-[500px] lg:h-[600px] overflow-hidden">
         {/* Video background */}
         <video
           key={currentVideo.videoSrc}
@@ -132,41 +136,43 @@ const Home = () => {
         </video>
 
         {/* Overlay + Nội dung */}
-        <div className="absolute inset-0  flex items-center px-8 lg:px-16 text-white">  {/* muốn video mờ thì thêm bg-black/60 */}
+        <div className="absolute inset-0 flex items-center px-8 lg:px-16 text-white">
           <div className="max-w-lg">
-            {/* Hiển thị vị trí video hiện tại */}
-            <img src={currentVideo.logo} alt="Logo" className="w-[250px] md:w-[300px] lg:w-[350px] mb-4 mx-auto" />
-            <p className="text-lg mt-4 hidden sm:block">{currentVideo.description}</p>
-            <div className="mt-6 items-center justify-start space-x-4 sm:justify-center sm:space-x-2 sm:space-y-0">
+            {/* Logo */}
+            <img
+              src={currentVideo.logo}
+              alt="Logo"
+              className="w-[250px] md:w-[300px] lg:w-[350px] mb-4 mx-auto"
+            />
+            <p className="text-lg mt-4">{currentVideo.description}</p>
+
+            <div className="mt-6 flex items-center justify-start space-x-4">
               {/* Nút "Phát" */}
               <button
-                className="bg-white hover:bg-gray-200 transition px-6 py-2 rounded-lg text-black font-semibold shadow-lg flex items-center justify-center space-x-2 
-               sm:px-3 sm:py-1 sm:text-sm sm:w-auto"
+                className="bg-white hover:bg-gray-200 transition px-6 py-2 rounded-lg text-black font-semibold shadow-lg flex items-center justify-center space-x-2"
                 onClick={() => navigate(currentVideo.watchLink)}
-                style={{ minWidth: "120px", display: "inline-flex" }} // Cố định kích thước nhỏ trên Mobile, inline-flex giúp tránh vỡ
+                style={{ minWidth: "120px", display: "inline-flex" }}
               >
-                <img src={playIcon} alt="Phát" className="w-5 h-5 sm:w-4 sm:h-4" />
+                <img src={playIcon} alt="Phát" className="w-5 h-5" />
                 <span>Phát</span>
               </button>
 
               {/* Nút "Chi Tiết" */}
               <button
-                className="bg-gray-600 hover:bg-gray-800 transition px-6 py-2 rounded-lg text-white font-semibold shadow-lg flex items-center justify-center space-x-2 
-               sm:px-3 sm:py-1 sm:text-sm sm:w-auto"
+                className="bg-gray-600 hover:bg-gray-800 transition px-6 py-2 rounded-lg text-white font-semibold shadow-lg flex items-center justify-center space-x-2"
                 onClick={() => navigate(currentVideo.detailLink)}
-                style={{ minWidth: "120px", display: "inline-flex" }} // Cố định kích thước nhỏ trên Mobile, inline-flex giúp tránh vỡ
+                style={{ minWidth: "120px", display: "inline-flex" }}
               >
-                <img src={info} alt="Chi Tiết" className="w-5 h-5 filter invert sm:w-4 sm:h-4" />
+                <img src={info} alt="Chi Tiết" className="w-5 h-5 filter invert" />
                 <span>Chi Tiết</span>
               </button>
             </div>
-
           </div>
         </div>
 
-        {/* Thumbnail Selection - Chỉ hiển thị trên Desktop ko hiển thị trên mobile */}
-        <div className="hidden md:flex absolute bottom-5 right-5 space-x-2 bg-black/50 p-2 rounded-lg">
-          {videoList.map((video, index) => (
+        {/* Thumbnail Selection - Chỉ hiển thị trên Desktop */}
+        <div className="absolute bottom-5 right-5 flex flex-row items-center space-x-2 bg-black/50 p-2 rounded-lg">
+        {videoList.map((video, index) => (
             <img
               key={video.videoSrc}
               src={video.logo}
@@ -177,8 +183,8 @@ const Home = () => {
             />
           ))}
         </div>
-
       </div>
+
 
       <div className="container mt-[45px] px-4">
         {/* <Filter /> */}
