@@ -33,6 +33,9 @@ const Film = () => {
   });
 
   const dataFilm = data?.movie;
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState<number>(0);
+  const [isSeriesFilm, setIsSeriesFilm] = useState<boolean>(false);
+  const [currentServerEpisodes, setCurrentServerEpisodes] = useState<{name: string; embed: string}[]>([]);
 
   useEffect(() => {
     if (dataFilm && dataFilm.episodes.length > 0) {
@@ -41,6 +44,11 @@ const Film = () => {
         setNameServer(firstServer.server_name);
         setEpisode(firstServer.items[0]?.embed || '');
         setSelectedEpisode(firstServer.items[0]?.name || '');
+        setCurrentServerEpisodes(firstServer.items);
+        
+        // Nếu có nhiều hơn 1 tập, đây là phim bộ
+        setIsSeriesFilm(firstServer.items.length > 1);
+        setCurrentEpisodeIndex(0);
       }
     }
   }, [dataFilm]);
@@ -105,25 +113,54 @@ const Film = () => {
   const handleServerChange = (serverName: string) => {
     const newServer = dataFilm.episodes.find((s: { server_name: string; items: { name: string; embed: string }[] }) => s.server_name === serverName);
     if (newServer && newServer.items.length > 0) {
+      // Lưu danh sách tập của server hiện tại
+      setCurrentServerEpisodes(newServer.items);
+      
       // Tìm tập phim trùng với tập hiện tại trên server mới
       const matchingEpisode = newServer.items.find((ep: { name: string; embed: string }) => ep.name === selectedEpisode);
       if (matchingEpisode) {
         // Nếu tìm thấy tập trùng thì giữ nguyên tập
         setEpisode(matchingEpisode.embed);
+        // Tìm index của tập hiện tại trong server mới
+        const newIndex = newServer.items.findIndex((ep: { name: string; embed: string }) => ep.name === selectedEpisode);
+        setCurrentEpisodeIndex(newIndex !== -1 ? newIndex : 0);
       } else {
         // Nếu không có tập trùng, chọn tập đầu tiên của server mới
         setEpisode(newServer.items[0].embed);
         setSelectedEpisode(newServer.items[0].name);
+        setCurrentEpisodeIndex(0);
       }
       setNameServer(serverName);
+      
+      // Kiểm tra xem đây có phải là phim bộ
+      setIsSeriesFilm(newServer.items.length > 1);
     }
   };
 
-  const handleEpisodeChange = (embedUrl: string, epName: string) => {
+  const handleEpisodeChange = (embedUrl: string, epName: string, index: number) => {
     setEpisode(embedUrl);
     setSelectedEpisode(epName);
+    setCurrentEpisodeIndex(index);
+    setStartTime(new Date().getTime()); // Reset thời gian xem khi đổi tập
   };
 
+  // Hàm điều hướng đến tập trước
+  const goToPreviousEpisode = () => {
+    if (currentEpisodeIndex > 0) {
+      const prevIndex = currentEpisodeIndex - 1;
+      const prevEpisode = currentServerEpisodes[prevIndex];
+      handleEpisodeChange(prevEpisode.embed, prevEpisode.name, prevIndex);
+    }
+  };
+
+  // Hàm điều hướng đến tập tiếp theo
+  const goToNextEpisode = () => {
+    if (currentEpisodeIndex < currentServerEpisodes.length - 1) {
+      const nextIndex = currentEpisodeIndex + 1;
+      const nextEpisode = currentServerEpisodes[nextIndex];
+      handleEpisodeChange(nextEpisode.embed, nextEpisode.name, nextIndex);
+    }
+  };
 
   // Load dữ liệu đã lưu trước đó
   useEffect(() => {
@@ -180,7 +217,7 @@ const Film = () => {
     window.dispatchEvent(new Event("storage"));
 
     setSavedNote(`📌 Tập: ${episodeNote} - ⏳ ${formatTime(parseInt(minutes), parseInt(seconds))}`);
-};
+  };
 
   
   // Hàm định dạng thời gian hiển thị
@@ -188,8 +225,6 @@ const Film = () => {
     return `${m}:${s < 10 ? `0${s}` : s}`;
   };
   
-
-
   if (isLoading) return <div className="text-white text-center mt-10">Đang tải thông tin phim...</div>;
   if (isError || !dataFilm) return <div className="text-red-500 text-center mt-10">Không tìm thấy phim!</div>;
 
@@ -220,6 +255,49 @@ const Film = () => {
             </div>
           )}
         </div>
+
+        {/* Điều hướng tập phim */}
+        {isSeriesFilm && (
+          <div className="mt-4 flex justify-center gap-4">
+            <button
+              onClick={goToPreviousEpisode}
+              disabled={currentEpisodeIndex === 0}
+              className={classNames(
+                'px-4 py-2 rounded flex items-center justify-center gap-2 font-medium',
+                {
+                  'bg-blue-500 text-white hover:bg-blue-600': currentEpisodeIndex > 0,
+                  'bg-gray-600 text-gray-400 cursor-not-allowed': currentEpisodeIndex === 0,
+                }
+              )}
+            >
+              <svg className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" />
+              </svg>
+              Tập trước
+            </button>
+            
+            <div className="bg-gray-800 text-white px-4 py-2 rounded flex items-center">
+              Tập: {selectedEpisode}
+            </div>
+            
+            <button
+              onClick={goToNextEpisode}
+              disabled={currentEpisodeIndex === currentServerEpisodes.length - 1}
+              className={classNames(
+                'px-4 py-2 rounded flex items-center justify-center gap-2 font-medium',
+                {
+                  'bg-blue-500 text-white hover:bg-blue-600': currentEpisodeIndex < currentServerEpisodes.length - 1,
+                  'bg-gray-600 text-gray-400 cursor-not-allowed': currentEpisodeIndex === currentServerEpisodes.length - 1,
+                }
+              )}
+            >
+              Tập sau
+              <svg className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Chọn server */}
         {dataFilm.episodes.length > 0 && (
@@ -339,7 +417,7 @@ const Film = () => {
                         'bg-gray-800 border-gray-600': ep.name !== selectedEpisode,
                       }
                     )}
-                    onClick={() => handleEpisodeChange(ep.embed, ep.name)}
+                    onClick={() => handleEpisodeChange(ep.embed, ep.name, currentServerEpisodes.findIndex(e => e.name === ep.name))}
                   >
                     {ep.name}
                   </button>
