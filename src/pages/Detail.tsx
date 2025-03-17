@@ -61,7 +61,15 @@ const Detail = () => {
 
 
 
-  if (isLoading) return <div className="text-white text-center mt-10">Đang tải thông tin phim...</div>;
+  if (isLoading) return (
+    <div className="flex flex-col items-center justify-center mt-20">
+      <svg className="animate-spin h-10 w-10 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span className="text-white mt-3">Đang tải thông tin phim...</span>
+    </div>
+  );
   if (isError || !dataFilm) return <div className="text-red-500 text-center mt-10">Không tìm thấy phim!</div>;
 
   return (
@@ -74,7 +82,7 @@ const Detail = () => {
       {/* Thông báo */}
       <Toaster position="top-right" reverseOrder={false} />
 
-      
+
       {/* Ảnh nền của phim */}
       <div
         className="h-[600px] -mt-[56px] bg-cover bg-no-repeat bg-[50%_0] relative before:content-[''] before:absolute before:w-full before:top-0 before:bottom-0 before:bg-[#020d18bf]"
@@ -117,10 +125,23 @@ const Detail = () => {
               {dataFilm.time ? dataFilm.time : 'Đang cập nhật'}
             </span>
 
-            <div className="flex gap-3 mb-8 md:mb-10">
+            <div className="flex gap-3 mb-8 md:mb-10 items-center">
+              {/* IMDb Rating Badge */}
+              <div className="flex items-center">
+                <span className="bg-yellow-400 text-black font-bold px-2 py-1 rounded-l-sm flex items-center justify-center">
+                  <span className="text-sm">IMDb</span>
+                </span>
+                <span className="bg-gray-800 text-white px-2 py-1 rounded-r-sm flex items-center justify-center">
+                  <span className="text-sm font-bold">6.8</span>
+                </span>
+              </div>
+
+              {/* Quality Badge */}
               <span className="text-white cursor-help w-max block p-[2px] px-[10px] rounded-[4px] bg-rose-600/80">
-                {dataFilm.quality}
+                F{dataFilm.quality}
               </span>
+
+              {/* Language Badge */}
               <span className="text-white cursor-help w-max block p-[2px] px-[10px] rounded-[4px] bg-yellow-400/80">
                 {dataFilm.language}
               </span>
