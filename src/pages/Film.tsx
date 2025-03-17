@@ -231,8 +231,8 @@ const Film = () => {
   return (
     <>
       <Helmet>
-        <title>{`CNCPhim | ${dataFilm.name} ${dataFilm.selectedEpisode}`}</title>
-        <meta name="description" content={`${dataFilm.description} | Xem phim miễn phí tại CNCPhim`} />
+      <title>{`CNCPhim | ${dataFilm.name} - Tập ${selectedEpisode}`}</title>
+      <meta name="description" content={`${dataFilm.description} | Xem phim miễn phí tại CNCPhim`} />
       </Helmet>
 
       <div>
